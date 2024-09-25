@@ -50,6 +50,9 @@ Sub module2codes()
                     ws.Range("I" & summary_table_row).Value = ticker
                     ws.Range("L" & summary_table_row).Value = total_stock_value
                     ws.Range("J" & summary_table_row).Value = quarterly_change
+
+                    'Format to 0.00
+                    ws.Range("J" & summary_table_row).NumberFormat = "0.00"
                     
 
                     ' Calculate percent change 
@@ -113,6 +116,63 @@ Sub module2codes()
 
 
         Next j
+
+        'lable rows and columns
+        ws.Cells(1, 16).Value = "Ticker"
+        ws.Cells(1, 17).Value = "Value"
+        ws.Cells(2, 15).Value = "Greatest % Increase"
+        ws.Cells(3, 15).Value = "Greatest % Decrease"
+        ws.Cells(4, 15).Value = "Greatest Total Volume"
+
+
+        
+        'set initial values for percent change
+        max = 0
+        min = 0
+        maxTicker = ""
+        minTicker = ""
+
+
+        For i = 2 to summary_table_row
+            'if value is larger than old max
+            if ws.Cells(i, 11).Value > max Then
+            'store as new max
+            max = ws.Cells(i, 11).Value
+            maxTicker = ws.Cells(i, 9).Value
+
+            End if
+
+            'if value is greatest negative
+            if ws.Cells(i, 11).Value < min Then
+            min =  ws.Cells(i, 11).Value
+            minTicker = ws.Cells(i, 9).Value
+
+            End if
+         Next i
+
+         'PRINT quarterly change Greatest Increase and Decrease
+         ws.Cells(2, 17).Value = Format(max, "0.00%")
+         ws.Cells(2, 16).Value = maxTicker
+         ws.Cells(3, 17).Value = Format(min, "0.00%")
+         ws.Cells(3, 16).Value = minTicker
+
+         'Find greatest total volume 
+         Dim greatestvolume As Double
+         greatestvolume = 0
+         Dim greatestvolumeticker As String
+
+         For i = 2 to summary_table_row
+            If ws.Cells(i, 12).Value > greatestvolume Then
+                greatestvolume = ws.Cells(i, 12).Value
+                greatestvolumeticker = ws.Cells(i, 9).Value
+            
+            End if
+
+        Next i
+        'Print greatest total volume
+        ws.Cells(4,17).Value = greatestvolume
+        ws.Cells(4,16).Value = greatestvolumeticker
+
 
     Next ws
 
